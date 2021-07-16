@@ -1,0 +1,11 @@
+<form action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <legend>
+        <h1>Upload CSV file</h1>
+    </legend>
+    {% if error_message %}
+    <p><strong>{{ error_message }}</strong></p>
+    {% endif %}
+    <input type="file" name="csv_file" id="csv_file" required="True" class="form-control" accept=".csv">
+    <input type="submit" value="Submit Reservations">
+</form>

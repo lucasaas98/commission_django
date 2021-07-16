@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Reservations</h2>
+    {% if reservations %}
+
+    <table>
+        <tr>
+            <th>Reservation</th>
+            <th>Checkin</th>
+            <th>Checkout</th>
+            <th>Flat</th>
+            <th>Income, EUR</th>
+            <th>City</th>
+            <th>Rate</th>
+        </tr>
+        {% for reservation in reservations %}
+        <tr>
+            <td>{{reservation.reservation}}</td>
+            <td>{{reservation.checkin_date}}</td>
+            <td>{{reservation.checkout_date}}</td>
+            <td>{{reservation.flat}}</td>
+            <td>{{reservation.income}}</td>
+            <td>{{reservation.city.city_name}}</td>
+            <td>{{reservation.city.rate}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div>
+        <form action="{% url 'calculatetotal' %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Calculate Total Commission">
+        </form>
+        <form action="{% url 'calculatemonthly' %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Calculate Monthly Commission">
+        </form>
+        <form action="{% url 'calculatecity' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="city">
+            <input type="submit" value="Calculate City Commission ">
+        </form>
+    </div>
+
+
+
+    {% if function_result %}
+    <p>Result: {{function_result}}</p>
+    {% endif %} {% else %}
+    <p>No reservations are available.</p>
+    <form action="{% url 'upload' %}" method="get">
+        {% csrf_token %}
+        <input type="submit" value="Upload page">
+    </form>
+    {% endif %}
+
+
+</body>
+
+</html>
