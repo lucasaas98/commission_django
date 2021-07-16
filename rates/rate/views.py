@@ -58,18 +58,28 @@ def upload(request):
 
 def calculate_total(request):
     reservations = Reservation.objects.all()
-    total_commission = 0
-    for reservation in reservations:
-        total_commission += reservation.income * reservation.city.rate
-    return render(request, 'rate/index.html', {'reservations': reservations, "function_result": total_commission})
+    return render(request, 'rate/index.html', {'reservations': reservations, "function_result": total_commission(reservations)})
 
 
 def calculate_monthly(request):
-
-
     reservations = Reservation.objects.all()
+    return render(request, 'rate/index.html', {'reservations': reservations, "function_result": monthly_commission(reservations)})
 
 
+def calculate_city(request):
+    city_name = request.POST['city'].upper()
+    reservations = Reservation.objects.all()
+    return render(request, 'rate/index.html', {'reservations': reservations, "function_result": city_commissions(reservations, city_name)})
+
+
+def total_commission(reservations):
+    total_commission = 0
+    for reservation in reservations:
+        total_commission += reservation.income * reservation.city.rate
+    return total_commission
+
+
+def monthly_commission(reservations):
     commission_dict = dict()
     for reservation in reservations:
         # if the format is always as is shown in the file than it makes sense to split instead of parsing with dateutil
@@ -92,18 +102,17 @@ def calculate_monthly(request):
                 commission_dict[date_key] = 0
             commission_dict[date_key] += monthly_rate
             current_date += rd(months=1)
+    
+    return commission_dict
 
-    return render(request, 'rate/index.html', {'reservations': reservations, "function_result": commission_dict})
 
-
-def calculate_city(request):
-    city_name = request.POST['city'].upper()
-    reservations = Reservation.objects.all()
+def city_commissions(reservations, city_name):
     total_commission = 0
     for reservation in reservations:
         if reservation.city.city_name == city_name:
             total_commission += reservation.income * reservation.city.rate
-    return render(request, 'rate/index.html', {'reservations': reservations, "function_result": total_commission})
+    return total_commission
+
 
 def create_cities():
     rates = {"LONDON": 0.1,
