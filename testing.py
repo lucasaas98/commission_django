@@ -79,4 +79,3 @@ if __name__ == '__main__':
     print(total_commission())
     print(commission_per_month())
     print(commission_by_city("paris"))
-    # print(reservations)
