@@ -78,8 +78,9 @@ def total_commission(reservations):
         total_commission += reservation.income * reservation.city.rate
     return total_commission
 
-
-def monthly_commission(reservations):
+# This version would be applied if you consider the income is divided by the months that encompass checkin date to checkout date 
+# AKA this version does not consider how many days of a month are between checkin and checkout date
+def monthly_commission_old(reservations):
     commission_dict = dict()
     for reservation in reservations:
         # if the format is always as is shown in the file than it makes sense to split instead of parsing with dateutil
@@ -102,6 +103,29 @@ def monthly_commission(reservations):
                 commission_dict[date_key] = 0
             commission_dict[date_key] += monthly_rate
             current_date += rd(months=1)
+    
+    return commission_dict
+
+
+def monthly_commission(reservations):
+    commission_dict = dict()
+    for reservation in reservations:
+        checkin_date = reservation.checkin_date
+        checkout_date =reservation.checkout_date
+        total_commission = 0
+
+        total_commission += reservation.income * reservation.city.rate
+
+        delta = checkout_date - checkin_date
+
+        daily_rate = total_commission / delta.days
+        current_date = checkin_date
+        for i in range(delta.days):
+            date_key = f"{checkout_date.month}/{checkout_date.year}"
+            if not date_key in commission_dict.keys():
+                commission_dict[date_key] = 0
+            commission_dict[date_key] += daily_rate
+            current_date += rd(days=1)
     
     return commission_dict
 

@@ -130,7 +130,10 @@ class ModelsTestCase(TestCase):
         reservation2.save()
 
         reservations = [reservation1, reservation2]
-        self.assertEquals(monthly_commission(reservations), {'7/2021': 70.0, '6/2021': 90.0})
+        month_dict = monthly_commission(reservations)
+        for k,v in month_dict.items():
+            month_dict[k] = round(v,2)
+        self.assertEquals(month_dict, {'7/2021': 70.0, '6/2021': 90.0})
 
 
 class ViewsTestCase(TestCase):
